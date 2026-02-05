@@ -16,7 +16,7 @@ public class CandidateEntity {
     @Email(message = "The email field is invalid.")
     private String email;
 
-    @Length(min = 10, max = 100)
+    @Length(min = 10, max = 100, message = "The password length must be between 10 and 100 characters.")
     private String password;
 
     private String description;
