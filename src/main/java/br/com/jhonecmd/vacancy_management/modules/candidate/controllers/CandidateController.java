@@ -3,12 +3,13 @@ package br.com.jhonecmd.vacancy_management.modules.candidate.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.jhonecmd.vacancy_management.exceptions.ResourceAlreadyExists;
 import br.com.jhonecmd.vacancy_management.modules.candidate.entities.CandidateEntity;
-import br.com.jhonecmd.vacancy_management.modules.candidate.repositories.CandidateRepository;
+import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.CreateCandidateUseCase;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -17,15 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CandidateController {
 
     @Autowired
-    private CandidateRepository candidateRepository;
+    private CreateCandidateUseCase createCandidateUseCase;
 
     @PostMapping("")
-    public CandidateEntity create(@Valid @RequestBody CandidateEntity candidateEntity) {
-        this.candidateRepository.findByEmail(candidateEntity.getEmail()).ifPresent((candidate) -> {
-            throw new ResourceAlreadyExists();
-        });
-
-        return this.candidateRepository.save(candidateEntity);
+    public ResponseEntity<Object> create(@Valid @RequestBody CandidateEntity candidateEntity) {
+        try {
+            this.createCandidateUseCase.execute(candidateEntity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
-
 }
