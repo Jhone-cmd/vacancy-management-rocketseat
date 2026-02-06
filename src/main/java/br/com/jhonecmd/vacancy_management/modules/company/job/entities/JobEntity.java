@@ -23,10 +23,14 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
     private String benefits;
+
     private Level level;
 
     @ManyToOne()
