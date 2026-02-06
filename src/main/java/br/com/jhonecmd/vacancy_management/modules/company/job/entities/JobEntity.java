@@ -5,9 +5,13 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +35,7 @@ public class JobEntity {
 
     private String benefits;
 
+    @Enumerated(EnumType.STRING)
     private Level level;
 
     @ManyToOne()
@@ -45,5 +50,17 @@ public class JobEntity {
 
     private enum Level {
         JUNIOR, Pleno, Senior;
+
+        @JsonCreator
+        public static Level fromValue(String value) {
+            if (value == null)
+                return null;
+            try {
+                return Level.valueOf(value.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Valor inválido: '" + value +
+                        "'.\nOs valores aceitos são: JUNIOR, PLENO ou SENIOR.");
+            }
+        }
     }
 }
