@@ -23,7 +23,7 @@ public class CreateCandidateUseCase {
             throw new ResourceAlreadyExists();
         });
 
-        var password = passwordEncoder.encode(candidateEntity.getPassword());
+        var password = this.passwordEncoder.encode(candidateEntity.getPassword());
 
         candidateEntity.setPassword(password);
 
