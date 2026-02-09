@@ -1,6 +1,7 @@
 package br.com.jhonecmd.vacancy_management.modules.candidate.useCases;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.jhonecmd.vacancy_management.exceptions.ResourceAlreadyExists;
@@ -13,11 +14,18 @@ public class CreateCandidateUseCase {
     @Autowired
     private CandidateRepository candidateRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public void execute(CandidateEntity candidateEntity) {
 
         this.candidateRepository.findByEmail(candidateEntity.getEmail()).ifPresent((candidate) -> {
             throw new ResourceAlreadyExists();
         });
+
+        var password = passwordEncoder.encode(candidateEntity.getPassword());
+
+        candidateEntity.setPassword(password);
 
         this.candidateRepository.save(candidateEntity);
         return;
