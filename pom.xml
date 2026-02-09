@@ -77,6 +77,12 @@
 			<version>1.18.38</version>
 		</dependency>
 
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>com.auth0.jwt</artifactId>
+			<version>4.4.0</version>	
+		</dependency>
+
 	</dependencies>
 
 	<build>
