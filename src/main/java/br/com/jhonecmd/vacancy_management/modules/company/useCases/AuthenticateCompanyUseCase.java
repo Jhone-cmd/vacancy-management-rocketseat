@@ -13,6 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 
 import br.com.jhonecmd.vacancy_management.exceptions.InvalidCredentials;
 import br.com.jhonecmd.vacancy_management.modules.company.dto.AuthCompanyDTO;
+import br.com.jhonecmd.vacancy_management.modules.company.dto.AuthCompanyResponseDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.repositories.CompanyRepository;
 
 @Service
@@ -27,7 +28,7 @@ public class AuthenticateCompanyUseCase {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public String execute(AuthCompanyDTO authCompanyDTO) {
+    public AuthCompanyResponseDTO execute(AuthCompanyDTO authCompanyDTO) {
         var company = this.companyRepository.findByEmail(authCompanyDTO.getEmail()).orElseThrow(() -> {
             throw new InvalidCredentials();
         });
@@ -39,11 +40,15 @@ public class AuthenticateCompanyUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-        var expiresAt = Instant.now().plus(Duration.ofDays(7));
+        var expiresIn = Instant.now().plus(Duration.ofDays(7));
 
         var token = JWT.create().withIssuer("java-vagas").withSubject(company.getId().toString())
-                .withExpiresAt(expiresAt).sign(algorithm);
-        return token;
+                .withExpiresAt(expiresIn).sign(algorithm);
+
+        var authCompanyResponseDTO = AuthCompanyResponseDTO.builder().access_token(token)
+                .expiresAt(expiresIn.toEpochMilli()).build();
+
+        return authCompanyResponseDTO;
     }
 
 }
