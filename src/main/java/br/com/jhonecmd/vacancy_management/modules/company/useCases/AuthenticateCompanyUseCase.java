@@ -39,8 +39,10 @@ public class AuthenticateCompanyUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        var expiresAt = Instant.now().plus(Duration.ofDays(7));
+
         var token = JWT.create().withIssuer("java-vagas").withSubject(company.getId().toString())
-                .withExpiresAt(Instant.now().plus(Duration.ofDays(7))).sign(algorithm);
+                .withExpiresAt(expiresAt).sign(algorithm);
         return token;
     }
 
