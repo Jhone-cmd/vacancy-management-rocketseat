@@ -17,10 +17,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity(name = "jobs")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class JobEntity {
 
     @Id
@@ -49,18 +55,18 @@ public class JobEntity {
     private LocalDateTime createAt;
 
     private enum Level {
-        JUNIOR, Pleno, Senior;
+        JUNIOR, PLENO, SENIOR;
+    }
 
-        @JsonCreator
-        public static Level fromValue(String value) {
-            if (value == null)
-                return null;
-            try {
-                return Level.valueOf(value.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Valor inválido: '" + value +
-                        "'.\nOs valores aceitos são: JUNIOR, PLENO ou SENIOR.");
-            }
+    @JsonCreator
+    public static Level fromValue(String value) {
+        if (value == null)
+            return null;
+        try {
+            return Level.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Valor inválido: '" + value +
+                    "'.\nOs valores aceitos são: JUNIOR, PLENO ou SENIOR.");
         }
     }
 }
