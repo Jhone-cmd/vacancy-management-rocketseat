@@ -42,13 +42,14 @@ public class AuthenticateCandidateUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-        var expiresAt = Instant.now().plus(Duration.ofDays(7));
+        var expiresIn = Instant.now().plus(Duration.ofDays(7));
 
         var token = JWT.create().withIssuer("java-vagas").withSubject(candidate.getId().toString())
                 .withClaim("roles", Arrays.asList("candidate"))
-                .withExpiresAt(expiresAt).sign(algorithm);
+                .withExpiresAt(expiresIn).sign(algorithm);
 
-        var authCandidateResponseDTO = AuthCandidateResponseDTO.builder().access_token(token).build();
+        var authCandidateResponseDTO = AuthCandidateResponseDTO.builder().access_token(token)
+                .expiresAt(expiresIn.toEpochMilli()).build();
 
         return authCandidateResponseDTO;
     }
