@@ -29,6 +29,7 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (request.getRequestURI().startsWith("/candidates")) {
+
             if (header != null) {
 
                 var token = this.jwtCandidateProvider.validateToken(header);
@@ -39,6 +40,7 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
                 }
 
                 request.setAttribute("candidateId", token.getSubject());
+
                 var roles = token.getClaim("roles").asList(Object.class);
 
                 var grants = roles.stream()

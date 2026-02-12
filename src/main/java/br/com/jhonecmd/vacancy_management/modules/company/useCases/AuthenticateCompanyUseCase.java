@@ -2,6 +2,7 @@ package br.com.jhonecmd.vacancy_management.modules.company.useCases;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,7 @@ public class AuthenticateCompanyUseCase {
         var expiresIn = Instant.now().plus(Duration.ofDays(7));
 
         var token = JWT.create().withIssuer("java-vagas").withSubject(company.getId().toString())
+                .withClaim("roles", Arrays.asList("COMPANY"))
                 .withExpiresAt(expiresIn).sign(algorithm);
 
         var authCompanyResponseDTO = AuthCompanyResponseDTO.builder().access_token(token)
