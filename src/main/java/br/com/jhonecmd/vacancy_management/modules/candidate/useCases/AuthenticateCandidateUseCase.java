@@ -45,7 +45,7 @@ public class AuthenticateCandidateUseCase {
         var expiresIn = Instant.now().plus(Duration.ofDays(7));
 
         var token = JWT.create().withIssuer("java-vagas").withSubject(candidate.getId().toString())
-                .withClaim("roles", Arrays.asList("candidate"))
+                .withClaim("roles", Arrays.asList("CANDIDATE"))
                 .withExpiresAt(expiresIn).sign(algorithm);
 
         var authCandidateResponseDTO = AuthCandidateResponseDTO.builder().access_token(token)
