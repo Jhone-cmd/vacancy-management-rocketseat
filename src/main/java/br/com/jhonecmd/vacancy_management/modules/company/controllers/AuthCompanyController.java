@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.modules.company.dto.AuthCompanyDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.useCases.AuthenticateCompanyUseCase;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/companies")
+@Tag(name = "Companies", description = "Routes intended for companies.")
 public class AuthCompanyController {
 
     @Autowired

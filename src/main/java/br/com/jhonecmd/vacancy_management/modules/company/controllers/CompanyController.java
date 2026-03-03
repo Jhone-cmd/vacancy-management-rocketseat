@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.useCases.CreateCompanyUseCase;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/companies")
+@Tag(name = "Companies", description = "Routes intended for companies.")
 public class CompanyController {
 
     @Autowired
