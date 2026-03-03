@@ -59,10 +59,9 @@ public class CandidateController {
 
     @GetMapping("/jobs")
     @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<Object> profile(@RequestParam(required = false) String filter) {
+    public ResponseEntity<Object> listJobFilter(@RequestParam(required = false) String filter) {
         try {
 
-            System.out.println(filter);
             var result = this.listAllJobsByFilterUseCase.execute(filter);
             return ResponseEntity.ok(result);
 

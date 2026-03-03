@@ -54,7 +54,7 @@ public class JobEntity {
     @CreationTimestamp
     private LocalDateTime createAt;
 
-    private enum Level {
+    public enum Level {
         JUNIOR, PLENO, SENIOR;
     }
 
