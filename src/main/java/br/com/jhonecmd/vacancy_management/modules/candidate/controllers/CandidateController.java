@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -77,6 +78,7 @@ public class CandidateController {
     @GetMapping("/profile")
     @PreAuthorize("hasRole('CANDIDATE')")
     @Operation(summary = "View user profile.", description = "This route is designed to view profile of candidate.")
+    @SecurityRequirement(name = "auth")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {
                     @Content(schema = @Schema(implementation = ProfileCandidateDTO.class))
@@ -97,6 +99,7 @@ public class CandidateController {
     @GetMapping("/jobs")
     @PreAuthorize("hasRole('CANDIDATE')")
     @Operation(summary = "List of available job openings for candidates.", description = "This route is designed to list available job openings for candidates using a filter.")
+    @SecurityRequirement(name = "auth")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {
                     @Content(array = @ArraySchema(schema = @Schema(implementation = ListJobResponseDTO.class)))

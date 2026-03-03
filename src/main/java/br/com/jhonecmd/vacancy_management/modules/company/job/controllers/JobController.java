@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.jhonecmd.vacancy_management.modules.company.job.dto.CreateJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.entities.JobEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.useCases.CreateJobUseCase;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/companies/jobs")
 @Tag(name = "Jobs", description = "Routes intended for jobs.")
+@SecurityRequirement(name = "auth")
 public class JobController {
 
     @Autowired
