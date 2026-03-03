@@ -1,10 +1,12 @@
 package br.com.jhonecmd.vacancy_management.modules.candidate.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.modules.candidate.entities.CandidateEntity;
 import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.CreateCandidateUseCase;
+import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.ProfileCandidateUseCase;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -29,6 +31,9 @@ public class CandidateController {
     @Autowired
     private ProfileCandidateUseCase profileCandidateUseCase;
 
+    @Autowired
+    private ListAllJobsByFilterUseCase listAllJobsByFilterUseCase;
+
     @PostMapping("")
     public ResponseEntity<Object> create(@Valid @RequestBody CandidateEntity candidateEntity) {
         try {
@@ -47,6 +52,20 @@ public class CandidateController {
             var candidateId = request.getAttribute("candidateId");
             var result = this.profileCandidateUseCase.execute(UUID.fromString(candidateId.toString()));
             return ResponseEntity.ok(result);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/jobs")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<Object> profile(@RequestParam(required = false) String filter) {
+        try {
+
+            System.out.println(filter);
+            var result = this.listAllJobsByFilterUseCase.execute(filter);
+            return ResponseEntity.ok(result);
+
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
