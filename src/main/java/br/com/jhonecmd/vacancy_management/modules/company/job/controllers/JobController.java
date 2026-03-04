@@ -15,6 +15,7 @@ import br.com.jhonecmd.vacancy_management.exceptions.ErrorMessageDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.dto.CreateJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.entities.JobEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.useCases.CreateJobUseCase;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,6 +37,7 @@ public class JobController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('COMPANY')")
+    @Operation(summary = "Create a job.", description = "This route is designed to create a job.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Job created successfully"),
 

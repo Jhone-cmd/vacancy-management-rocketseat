@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.exceptions.ErrorMessageDTO;
+import br.com.jhonecmd.vacancy_management.modules.company.dto.CreateCompanyDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.useCases.CreateCompanyUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,10 +40,15 @@ public class CompanyController {
 
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorMessageDTO.class))))
     })
-    public ResponseEntity<Object> create(@Valid @RequestBody CompanyEntity companyEntity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody CreateCompanyDTO createCompanyDTO) {
         try {
+
+            var companyEntity = CompanyEntity.builder().name(createCompanyDTO.getName())
+                    .email(createCompanyDTO.getEmail()).password(createCompanyDTO.getPassword())
+                    .description(createCompanyDTO.getDescription()).webSite(createCompanyDTO.getWebSite()).build();
             this.createCompanyUseCase.execute(companyEntity);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
+
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
