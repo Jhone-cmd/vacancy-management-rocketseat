@@ -53,8 +53,8 @@ public class CandidateController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Candidate created successfully"),
 
-            @ApiResponse(responseCode = "409", description = "Candidate already exists", content = {
-                    @Content(schema = @Schema(implementation = String.class, example = "Candidate already exists."))
+            @ApiResponse(responseCode = "409", description = "Resource already exists.", content = {
+                    @Content(schema = @Schema(implementation = String.class, example = "Resource already exists!"))
             }),
 
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorMessageDTO.class))))
