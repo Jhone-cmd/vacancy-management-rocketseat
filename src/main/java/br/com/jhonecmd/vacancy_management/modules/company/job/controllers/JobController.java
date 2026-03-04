@@ -11,9 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.jhonecmd.vacancy_management.exceptions.ErrorMessageDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.dto.CreateJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.entities.JobEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.useCases.CreateJobUseCase;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +36,15 @@ public class JobController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('COMPANY')")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Job created successfully"),
+
+            @ApiResponse(responseCode = "409", description = "Resource already exists", content = {
+                    @Content(schema = @Schema(implementation = String.class, example = "Resource already exists."))
+            }),
+
+            @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorMessageDTO.class))))
+    })
     public ResponseEntity<Object> create(@Valid @RequestBody CreateJobDTO createJobDTO, HttpServletRequest request) {
         try {
             var companyId = request.getAttribute("companyId");
@@ -42,6 +57,7 @@ public class JobController {
 
             this.createJobUseCase.execute(jobEntity);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
+
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
