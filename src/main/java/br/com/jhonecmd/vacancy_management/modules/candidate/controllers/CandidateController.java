@@ -10,12 +10,14 @@ import br.com.jhonecmd.vacancy_management.modules.candidate.dto.CreateCandidateD
 import br.com.jhonecmd.vacancy_management.modules.candidate.dto.ListJobResponseDTO;
 import br.com.jhonecmd.vacancy_management.modules.candidate.dto.ProfileCandidateDTO;
 import br.com.jhonecmd.vacancy_management.modules.candidate.entities.CandidateEntity;
+import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.ApplyJobCandidateUseCase;
 import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.CreateCandidateUseCase;
 import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.ProfileCandidateUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -47,6 +49,9 @@ public class CandidateController {
 
     @Autowired
     private ListAllJobsByFilterUseCase listAllJobsByFilterUseCase;
+
+    @Autowired
+    private ApplyJobCandidateUseCase applyJobCandidateUseCase;
 
     @PostMapping("")
     @Operation(summary = "Create a candidate.", description = "This route is designed to create a candidate.")
@@ -109,6 +114,33 @@ public class CandidateController {
         try {
 
             var result = this.listAllJobsByFilterUseCase.execute(filter);
+            return ResponseEntity.ok(result);
+
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/apply/job")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(summary = "Candidate registration for a vacancy.", description = "This route is designed to a candidate registration for a vacancy.")
+    @SecurityRequirement(name = "auth")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Vacancy applied successfully"),
+
+            @ApiResponse(responseCode = "400", description = "Invalid Request", content = @Content(schema = @Schema(implementation = String.class), examples = {
+                    @ExampleObject(name = "Candidate", value = "Candidate not found!"),
+                    @ExampleObject(name = "Job", value = "Job not found!")
+            }))
+    })
+    public ResponseEntity<Object> applyJob(HttpServletRequest request, @RequestBody String jobId) {
+        try {
+
+            var candidateId = request.getAttribute("candidateId");
+
+            var result = this.applyJobCandidateUseCase.execute(UUID.fromString(candidateId.toString()),
+                    UUID.fromString(jobId.toString()));
+
             return ResponseEntity.ok(result);
 
         } catch (Exception ex) {
