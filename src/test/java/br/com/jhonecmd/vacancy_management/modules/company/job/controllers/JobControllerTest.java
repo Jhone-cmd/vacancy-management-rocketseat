@@ -1,7 +1,5 @@
 package br.com.jhonecmd.vacancy_management.modules.company.job.controllers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import br.com.jhonecmd.vacancy_management.exceptions.CompanyNotFound;
-import br.com.jhonecmd.vacancy_management.exceptions.ResourceAlreadyExists;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.dto.CreateJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.repositories.CompanyRepository;
@@ -84,19 +80,14 @@ public class JobControllerTest {
                 var createdJobDTO = CreateJobDTO.builder().name("java test-" + UUID.randomUUID())
                                 .benefits("benefits test")
                                 .description("description test").level("junior").build();
-
-                try {
-                        mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(TestUtils.objectToJson(createdJobDTO))
-                                        .header("Authorization",
-                                                        TestUtils.generateToken(
-                                                                        UUID.randomUUID(),
-                                                                        secret)));
-                } catch (Exception ex) {
-                        assertThat(ex).isInstanceOf(CompanyNotFound.class);
-                }
-
+                mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdJobDTO))
+                                .header("Authorization",
+                                                TestUtils.generateToken(
+                                                                UUID.randomUUID(),
+                                                                secret)))
+                                .andExpect(MockMvcResultMatchers.status().isBadRequest());
         }
 
         @Test
@@ -107,25 +98,23 @@ public class JobControllerTest {
                                 .benefits("benefits test")
                                 .description("description test").level("junior").build();
 
-                try {
-                        mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(TestUtils.objectToJson(createdJobDTO))
-                                        .header("Authorization",
-                                                        TestUtils.generateToken(
-                                                                        UUID.randomUUID(),
-                                                                        secret)));
+                mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdJobDTO))
+                                .header("Authorization",
+                                                TestUtils.generateToken(
+                                                                UUID.randomUUID(),
+                                                                secret)));
 
-                        mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(TestUtils.objectToJson(createdJobDTO))
-                                        .header("Authorization",
-                                                        TestUtils.generateToken(
-                                                                        UUID.randomUUID(),
-                                                                        secret)));
-                } catch (Exception ex) {
-                        assertThat(ex).isInstanceOf(ResourceAlreadyExists.class);
-                }
+                mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdJobDTO))
+                                .header("Authorization",
+                                                TestUtils.generateToken(
+                                                                UUID.randomUUID(),
+                                                                secret)))
+                                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                ;
 
         }
 
