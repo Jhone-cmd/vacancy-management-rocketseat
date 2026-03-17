@@ -1,5 +1,7 @@
 package br.com.jhonecmd.vacancy_management.modules.company.job.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import br.com.jhonecmd.vacancy_management.exceptions.CompanyNotFound;
+import br.com.jhonecmd.vacancy_management.exceptions.ResourceAlreadyExists;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.dto.CreateJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.repositories.CompanyRepository;
@@ -63,7 +67,7 @@ public class JobControllerTest {
                                 .benefits("benefits test")
                                 .description("description test").level("junior").build();
 
-                var result = mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(TestUtils.objectToJson(createdJobDTO))
                                 .header("Authorization",
@@ -71,8 +75,58 @@ public class JobControllerTest {
                                                                 company.getId(),
                                                                 secret)))
                                 .andExpect(MockMvcResultMatchers.status().isCreated());
+        }
 
-                System.out.println(result);
+        @Test
+        @DisplayName("Should not be able to create a new job if company not found.")
+        public void should_not_be_able_to_create_a_new_job_if_company_not_found() throws Exception {
+
+                var createdJobDTO = CreateJobDTO.builder().name("java test-" + UUID.randomUUID())
+                                .benefits("benefits test")
+                                .description("description test").level("junior").build();
+
+                try {
+                        mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(TestUtils.objectToJson(createdJobDTO))
+                                        .header("Authorization",
+                                                        TestUtils.generateToken(
+                                                                        UUID.randomUUID(),
+                                                                        secret)));
+                } catch (Exception ex) {
+                        assertThat(ex).isInstanceOf(CompanyNotFound.class);
+                }
+
+        }
+
+        @Test
+        @DisplayName("Should not be able to create a new job if job already exists.")
+        public void should_not_be_able_to_create_a_new_job_if_jobName_already_exists() throws Exception {
+
+                var createdJobDTO = CreateJobDTO.builder().name("java test")
+                                .benefits("benefits test")
+                                .description("description test").level("junior").build();
+
+                try {
+                        mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(TestUtils.objectToJson(createdJobDTO))
+                                        .header("Authorization",
+                                                        TestUtils.generateToken(
+                                                                        UUID.randomUUID(),
+                                                                        secret)));
+
+                        mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(TestUtils.objectToJson(createdJobDTO))
+                                        .header("Authorization",
+                                                        TestUtils.generateToken(
+                                                                        UUID.randomUUID(),
+                                                                        secret)));
+                } catch (Exception ex) {
+                        assertThat(ex).isInstanceOf(ResourceAlreadyExists.class);
+                }
+
         }
 
 }
