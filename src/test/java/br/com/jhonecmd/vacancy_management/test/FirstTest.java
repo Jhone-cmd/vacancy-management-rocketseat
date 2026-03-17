@@ -1,4 +1,4 @@
-package br.com.jhonecmd.vacancy_management;
+package br.com.jhonecmd.vacancy_management.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

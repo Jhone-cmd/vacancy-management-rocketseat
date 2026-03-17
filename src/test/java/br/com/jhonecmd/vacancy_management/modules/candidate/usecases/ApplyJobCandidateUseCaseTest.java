@@ -1,4 +1,4 @@
-package br.com.jhonecmd.vacancy_management;
+package br.com.jhonecmd.vacancy_management.modules.candidate.usecases;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
