@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.exceptions.ErrorMessageDTO;
 import br.com.jhonecmd.vacancy_management.exceptions.ResourceAlreadyExists;
+import br.com.jhonecmd.vacancy_management.modules.candidate.dto.ApplyJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.candidate.dto.CreateCandidateDTO;
 import br.com.jhonecmd.vacancy_management.modules.candidate.dto.ListJobResponseDTO;
 import br.com.jhonecmd.vacancy_management.modules.candidate.dto.ProfileCandidateDTO;
@@ -133,15 +134,15 @@ public class CandidateController {
                     @ExampleObject(name = "Job", value = "Job not found!")
             }))
     })
-    public ResponseEntity<Object> applyJob(HttpServletRequest request, @RequestBody String jobId) {
+    public ResponseEntity<Object> applyJob(HttpServletRequest request, @RequestBody ApplyJobDTO applyJobDTO) {
         try {
 
             var candidateId = request.getAttribute("candidateId");
 
-            var result = this.applyJobCandidateUseCase.execute(UUID.fromString(candidateId.toString()),
-                    UUID.fromString(jobId.toString()));
+            this.applyJobCandidateUseCase.execute(UUID.fromString(candidateId.toString()),
+                    UUID.fromString(applyJobDTO.getJobId().toString()));
 
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok("vacancy applied successfully");
 
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
