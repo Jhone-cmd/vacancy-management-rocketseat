@@ -24,47 +24,47 @@ import br.com.jhonecmd.vacancy_management.modules.candidate.useCases.CreateCandi
 @ExtendWith(MockitoExtension.class)
 public class CreateCandidateUseCaseTest {
 
-    @InjectMocks
-    private CreateCandidateUseCase createCandidateUseCase;
+        @InjectMocks
+        private CreateCandidateUseCase createCandidateUseCase;
 
-    @Mock
-    private CandidateRepository candidateRepository;
+        @Mock
+        private CandidateRepository candidateRepository;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+        @Mock
+        private PasswordEncoder passwordEncoder;
 
-    @Test
-    @DisplayName("Should not be able to create a candidate if email already exists.")
-    public void should_not_be_able_to_create_a_candidate_if_email_already_exists() {
+        @Test
+        @DisplayName("Should not be able to create a candidate if email already exists.")
+        public void should_not_be_able_to_create_a_candidate_if_email_already_exists() {
 
-        var candidate = new CandidateEntity();
-        candidate.setEmail("candidate@email.com");
+                var candidate = new CandidateEntity();
+                candidate.setEmail("candidate@email.com");
 
-        when(this.candidateRepository.findByEmail(candidate.getEmail()))
-                .thenReturn(Optional.of(new CandidateEntity()));
+                when(this.candidateRepository.findByEmail(candidate.getEmail()))
+                                .thenReturn(Optional.of(new CandidateEntity()));
 
-        assertThatThrownBy(() -> this.createCandidateUseCase.execute(candidate))
-                .isInstanceOf(ResourceAlreadyExists.class);
-    }
+                assertThatThrownBy(() -> this.createCandidateUseCase.execute(candidate))
+                                .isInstanceOf(ResourceAlreadyExists.class);
+        }
 
-    @Test
-    @DisplayName("Should be able to create a candidate.")
-    public void should_be_able_to_create_a_candidate() {
+        @Test
+        @DisplayName("Should be able to create a candidate.")
+        public void should_be_able_to_create_a_candidate() {
 
-        var candidate = new CandidateEntity();
-        candidate.setEmail("candidate@email.com");
-        candidate.setPassword("password123");
+                var candidate = new CandidateEntity();
+                candidate.setEmail("candidate@email.com");
+                candidate.setPassword("password123");
 
-        when(candidateRepository.findByEmail(candidate.getEmail()))
-                .thenReturn(Optional.empty());
+                when(candidateRepository.findByEmail(candidate.getEmail()))
+                                .thenReturn(Optional.empty());
 
-        when(passwordEncoder.encode(candidate.getPassword()))
-                .thenReturn("password_encrypted");
+                when(passwordEncoder.encode(candidate.getPassword()))
+                                .thenReturn("password_encrypted");
 
-        this.createCandidateUseCase.execute(candidate);
+                this.createCandidateUseCase.execute(candidate);
 
-        assertThat(candidate.getPassword()).isEqualTo("password_encrypted");
+                assertThat(candidate.getPassword()).isEqualTo("password_encrypted");
 
-        verify(candidateRepository, times(1)).save(candidate);
-    }
+                verify(candidateRepository, times(1)).save(candidate);
+        }
 }
