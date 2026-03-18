@@ -11,4 +11,9 @@ public class AuthCandidateDTO {
 
     @Schema(example = "john@123456789")
     private String password;
+
+    public AuthCandidateDTO(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
