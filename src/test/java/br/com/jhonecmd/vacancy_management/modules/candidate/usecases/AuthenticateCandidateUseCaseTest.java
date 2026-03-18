@@ -49,7 +49,7 @@ public class AuthenticateCandidateUseCaseTest {
         @DisplayName("Should not be able to authenticate with incorrect email.")
         public void should_not_be_able_to_authenticate_with_incorrect_email() {
 
-                var authDTO = new AuthCandidateDTO("test@email.com", "encoded_password");
+                var authDTO = new AuthCandidateDTO("candidate@email.com", "encoded_password");
 
                 when(candidateRepository.findByEmail(authDTO.getEmail()))
                                 .thenReturn(Optional.empty());
@@ -103,5 +103,4 @@ public class AuthenticateCandidateUseCaseTest {
                 assertThat(result.getExpiresAt()).isGreaterThan(0);
                 verify(candidateRepository, times(1)).findByEmail(authDTO.getEmail());
         }
-
 }
