@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.exceptions.ErrorMessageDTO;
+import br.com.jhonecmd.vacancy_management.exceptions.ResourceAlreadyExists;
 import br.com.jhonecmd.vacancy_management.modules.company.dto.CreateCompanyDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.useCases.CreateCompanyUseCase;
@@ -49,6 +50,8 @@ public class CompanyController {
             this.createCompanyUseCase.execute(companyEntity);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
 
+        } catch (ResourceAlreadyExists ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
