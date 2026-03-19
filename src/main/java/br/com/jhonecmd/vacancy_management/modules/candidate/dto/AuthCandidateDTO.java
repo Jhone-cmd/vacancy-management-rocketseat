@@ -1,9 +1,15 @@
 package br.com.jhonecmd.vacancy_management.modules.candidate.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthCandidateDTO {
 
     @Schema(example = "johndoe@email.com")
@@ -11,9 +17,4 @@ public class AuthCandidateDTO {
 
     @Schema(example = "john@123456789")
     private String password;
-
-    public AuthCandidateDTO(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
 }
