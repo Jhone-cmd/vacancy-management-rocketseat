@@ -26,67 +26,67 @@ import br.com.jhonecmd.vacancy_management.utils.TestUtils;
 @ActiveProfiles("test")
 public class CompanyControllerTest {
 
-    private MockMvc mvc;
+        private MockMvc mvc;
 
-    @Autowired
-    private WebApplicationContext context;
+        @Autowired
+        private WebApplicationContext context;
 
-    @Autowired
-    private CompanyRepository companyRepository;
+        @Autowired
+        private CompanyRepository companyRepository;
 
-    @BeforeEach
-    public void setup() {
-        mvc = MockMvcBuilders.webAppContextSetup(context)
-                .build();
+        @BeforeEach
+        public void setup() {
+                companyRepository.deleteAll();
+                mvc = MockMvcBuilders.webAppContextSetup(context).build();
+        }
 
-        this.companyRepository.deleteAll();
-    }
+        @Test
+        @DisplayName("Should be able to create a new company.")
+        public void should_be_able_to_create_a_new_company() throws Exception {
 
-    @Test
-    @DisplayName("Should be able to create a new company.")
-    public void should_be_able_to_create_a_new_company() throws Exception {
+                var createdCompanyDTO = CreateCompanyDTO.builder().name("Company Test").description("Description Test")
+                                .email("company@email.com").password("encrypted_password")
+                                .webSite("https://wwww.company.com.br")
+                                .build();
 
-        var createdCompanyDTO = CreateCompanyDTO.builder().name("Company Test").description("Description Test")
-                .email("company@email.com").password("encrypted_password").webSite("https://wwww.company.com.br")
-                .build();
+                mvc.perform(MockMvcRequestBuilders.post("/companies")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdCompanyDTO)))
+                                .andExpect(MockMvcResultMatchers.status().isCreated());
+        }
 
-        mvc.perform(MockMvcRequestBuilders.post("/companies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJson(createdCompanyDTO)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-    }
+        @Test
+        @DisplayName("Should not be able to create a new company if him already exists.")
+        public void should_not_be_able_to_create_a_new_company_if_him_already_exists() throws Exception {
 
-    @Test
-    @DisplayName("Should not be able to create a new company if him already exists.")
-    public void should_not_be_able_to_create_a_new_company_if_him_already_exists() throws Exception {
+                var company = CompanyEntity.builder().name("Company-test").email("company@email.com")
+                                .password("1234567890").description("description test")
+                                .webSite("https://www.company.org").build();
 
-        var company = CompanyEntity.builder().name("Company-test").email("company@email.com")
-                .password("1234567890").description("description test")
-                .webSite("https://www.company.org").build();
+                company = this.companyRepository.saveAndFlush(company);
 
-        company = this.companyRepository.saveAndFlush(company);
+                var createdCompanyDTO = CreateCompanyDTO.builder().name("Company Test").description("Description Test")
+                                .email("company@email.com").password("encrypted_password")
+                                .webSite("https://wwww.company.com.br")
+                                .build();
 
-        var createdCompanyDTO = CreateCompanyDTO.builder().name("Company Test").description("Description Test")
-                .email("company@email.com").password("encrypted_password").webSite("https://wwww.company.com.br")
-                .build();
+                mvc.perform(MockMvcRequestBuilders.post("/companies")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdCompanyDTO)))
+                                .andExpect(MockMvcResultMatchers.status().isConflict());
+        }
 
-        mvc.perform(MockMvcRequestBuilders.post("/companies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJson(createdCompanyDTO)))
-                .andExpect(MockMvcResultMatchers.status().isConflict());
-    }
+        @Test
+        @DisplayName("Should not be able to create a new company if validations errors.")
+        public void should_not_be_able_to_create_a_new_company_if_validations_errors() throws Exception {
 
-    @Test
-    @DisplayName("Should not be able to create a new company if validations errors.")
-    public void should_not_be_able_to_create_a_new_company_if_validations_errors() throws Exception {
+                var createdCompanyDTO = CreateCompanyDTO.builder().name("").description("Description Test")
+                                .email("").password("encrypted_password").webSite("https://wwww.company.com.br")
+                                .build();
 
-        var createdCompanyDTO = CreateCompanyDTO.builder().name("").description("Description Test")
-                .email("").password("encrypted_password").webSite("https://wwww.company.com.br")
-                .build();
-
-        mvc.perform(MockMvcRequestBuilders.post("/companies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJson(createdCompanyDTO)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
+                mvc.perform(MockMvcRequestBuilders.post("/companies")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdCompanyDTO)))
+                                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        }
 }

@@ -2,10 +2,14 @@ package br.com.jhonecmd.vacancy_management.modules.company.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class AuthCompanyDTO {
 
     @Schema(example = "javavagas@company.com")
