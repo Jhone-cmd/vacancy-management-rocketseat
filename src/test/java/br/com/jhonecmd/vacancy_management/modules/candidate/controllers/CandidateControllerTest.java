@@ -27,57 +27,60 @@ import br.com.jhonecmd.vacancy_management.utils.TestUtils;
 @AutoConfigureMockMvc
 public class CandidateControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
+        @Autowired
+        private MockMvc mvc;
 
-    @Autowired
-    private CandidateRepository candidateRepository;
+        @Autowired
+        private CandidateRepository candidateRepository;
 
-    @BeforeEach
-    void setup() {
+        @BeforeEach
+        void setup() {
 
-        candidateRepository.deleteAll();
-        var candidate = CandidateEntity.builder().name("Candidate Test").email("candidate@email.com")
-                .password("1234567890").build();
-        candidate = candidateRepository.saveAndFlush(candidate);
-    }
+                candidateRepository.deleteAll();
+                var candidate = CandidateEntity.builder().name("Candidate Test").email("candidate@email.com")
+                                .password("1234567890").build();
+                candidate = candidateRepository.saveAndFlush(candidate);
+        }
 
-    @Test
-    @DisplayName("Should be able to create a new candidate.")
-    public void should_be_able_to_create_a_new_candidate() throws Exception {
+        @Test
+        @DisplayName("Should be able to create a new candidate.")
+        public void should_be_able_to_create_a_new_candidate() throws Exception {
 
-        var createdCandidateDTO = CreateCandidateDTO.builder().name("Candidate Test").email("candidatetest@email.com")
-                .password("1234567890").build();
+                var createdCandidateDTO = CreateCandidateDTO.builder().name("Candidate Test")
+                                .email("candidatetest@email.com")
+                                .password("1234567890").build();
 
-        mvc.perform(MockMvcRequestBuilders.post("/candidates")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJson(createdCandidateDTO)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-    }
+                mvc.perform(MockMvcRequestBuilders.post("/candidates")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdCandidateDTO)))
+                                .andExpect(MockMvcResultMatchers.status().isCreated());
+        }
 
-    @Test
-    @DisplayName("Should not be able to create a new candidate if him already exists.")
-    public void should_not_be_able_to_create_a_new_candidate_if_him_already_exists() throws Exception {
+        @Test
+        @DisplayName("Should not be able to create a new candidate if him already exists.")
+        public void should_not_be_able_to_create_a_new_candidate_if_him_already_exists() throws Exception {
 
-        var createdCandidateDTO = CreateCandidateDTO.builder().name("Candidate Test").email("candidate@email.com")
-                .password("1234567890").build();
+                var createdCandidateDTO = CreateCandidateDTO.builder().name("Candidate Test")
+                                .email("candidate@email.com")
+                                .password("1234567890").build();
 
-        mvc.perform(MockMvcRequestBuilders.post("/candidates")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJson(createdCandidateDTO)))
-                .andExpect(MockMvcResultMatchers.status().isConflict());
-    }
+                mvc.perform(MockMvcRequestBuilders.post("/candidates")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdCandidateDTO)))
+                                .andExpect(MockMvcResultMatchers.status().isConflict());
+        }
 
-    @Test
-    @DisplayName("Should not be able to create a new candidate if validations errors.")
-    public void should_not_be_able_to_create_a_new_candidate_if_validations_errors() throws Exception {
+        @Test
+        @DisplayName("Should not be able to create a new candidate if validations errors.")
+        public void should_not_be_able_to_create_a_new_candidate_if_validations_errors() throws Exception {
 
-        var createdCandidateDTO = CreateCandidateDTO.builder().name("").email("")
-                .password("1234567890").build();
+                var createdCandidateDTO = CreateCandidateDTO.builder().name("").email("")
+                                .password("1234567890").build();
 
-        mvc.perform(MockMvcRequestBuilders.post("/candidates")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJson(createdCandidateDTO)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
+                mvc.perform(MockMvcRequestBuilders.post("/candidates")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.objectToJson(createdCandidateDTO)))
+                                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        }
+
 }
