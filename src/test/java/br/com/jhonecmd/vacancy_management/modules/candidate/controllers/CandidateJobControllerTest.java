@@ -1,5 +1,7 @@
 package br.com.jhonecmd.vacancy_management.modules.candidate.controllers;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import br.com.jhonecmd.vacancy_management.modules.candidate.dto.ApplyJobDTO;
 import br.com.jhonecmd.vacancy_management.modules.candidate.entities.CandidateEntity;
+import br.com.jhonecmd.vacancy_management.modules.candidate.repositories.ApplyJobRepository;
 import br.com.jhonecmd.vacancy_management.modules.candidate.repositories.CandidateRepository;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.entities.JobEntity;
@@ -43,9 +47,13 @@ public class CandidateJobControllerTest {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private ApplyJobRepository applyJobRepository;
+
     @BeforeEach
     void setup() {
 
+        applyJobRepository.deleteAll();
         jobRepository.deleteAll();
         companyRepository.deleteAll();
         candidateRepository.deleteAll();
@@ -102,4 +110,58 @@ public class CandidateJobControllerTest {
                                 secret)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    @DisplayName("Should be able to apply job.")
+    public void should_be_able_to_apply_job() throws Exception {
+
+        var candidate = CandidateEntity.builder().name("Candidate Test").email("candidate@email.com")
+                .password("1234567890").build();
+        candidate = candidateRepository.saveAndFlush(candidate);
+
+        var company = CompanyEntity.builder()
+                .name("Dev Company")
+                .email("company@email.com")
+                .build();
+        company = companyRepository.saveAndFlush(company);
+
+        var job = JobEntity.builder()
+                .name("Developer Java")
+                .description("Vaga para Java")
+                .companyId(company.getId())
+                .level(Level.JUNIOR)
+                .build();
+
+        job = jobRepository.saveAndFlush(job);
+
+        var applyJobDTO = ApplyJobDTO.builder().jobId(job.getId().toString()).build();
+
+        mvc.perform(MockMvcRequestBuilders.post("/candidates/apply/job")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtils.objectToJson(applyJobDTO))
+                .header("Authorization",
+                        TestUtils.generateTokenCandidate(
+                                candidate.getId(),
+                                secret)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("Should not be able to apply job.")
+    public void should_not_be_able_to_apply_job() throws Exception {
+
+        var candidate = CandidateEntity.builder().name("Candidate Test").email("candidate@email.com")
+                .password("1234567890").build();
+        candidate = candidateRepository.saveAndFlush(candidate);
+
+        mvc.perform(MockMvcRequestBuilders.post("/candidates/apply/job")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtils.objectToJson(UUID.randomUUID().toString()))
+                .header("Authorization",
+                        TestUtils.generateTokenCandidate(
+                                candidate.getId(),
+                                secret)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
 }
