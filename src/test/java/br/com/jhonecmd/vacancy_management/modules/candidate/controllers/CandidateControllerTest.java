@@ -1,10 +1,13 @@
 package br.com.jhonecmd.vacancy_management.modules.candidate.controllers;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -26,6 +29,9 @@ import br.com.jhonecmd.vacancy_management.utils.TestUtils;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class CandidateControllerTest {
+
+        @Value("${security.token.secret.candidate}")
+        private String secret;
 
         @Autowired
         private MockMvc mvc;
@@ -83,4 +89,33 @@ public class CandidateControllerTest {
                                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         }
 
+        @Test
+        @DisplayName("Should be able to view a profile candidate.")
+        public void should_be_able_to_view_a_profile_candidate() throws Exception {
+
+                var candidate = CandidateEntity.builder().name("Candidate Test").email("candidateprofile@email.com")
+                                .password("1234567890").build();
+                candidate = candidateRepository.saveAndFlush(candidate);
+
+                mvc.perform(MockMvcRequestBuilders.get("/candidates/profile")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization",
+                                                TestUtils.generateTokenCandidate(
+                                                                candidate.getId(),
+                                                                secret)))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should not be able to view a profile candidate.")
+        public void should_not_be_able_to_view_a_profile_candidate() throws Exception {
+
+                mvc.perform(MockMvcRequestBuilders.get("/candidates/profile")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization",
+                                                TestUtils.generateTokenCandidate(
+                                                                UUID.randomUUID(),
+                                                                secret)))
+                                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        }
 }

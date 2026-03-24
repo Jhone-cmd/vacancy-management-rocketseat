@@ -30,4 +30,15 @@ public class TestUtils {
 
         return token;
     }
+
+    public static String generateTokenCandidate(UUID candidateId, String secretKey) {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        var expiresIn = Instant.now().plus(Duration.ofDays(7));
+
+        var token = JWT.create().withIssuer("java-vagas").withSubject(candidateId.toString())
+                .withClaim("roles", Arrays.asList("CANDIDATE"))
+                .withExpiresAt(expiresIn).sign(algorithm);
+
+        return token;
+    }
 }
