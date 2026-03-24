@@ -80,6 +80,7 @@ public class JobControllerTest {
                 var createdJobDTO = CreateJobDTO.builder().name("java test-" + UUID.randomUUID())
                                 .benefits("benefits test")
                                 .description("description test").level("junior").build();
+
                 mvc.perform(MockMvcRequestBuilders.post("/companies/jobs")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(TestUtils.objectToJson(createdJobDTO))
