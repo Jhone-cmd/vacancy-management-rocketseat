@@ -18,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import br.com.jhonecmd.vacancy_management.modules.company.dto.CreateCompanyDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
+import br.com.jhonecmd.vacancy_management.modules.company.job.repositories.JobRepository;
 import br.com.jhonecmd.vacancy_management.modules.company.repositories.CompanyRepository;
 import br.com.jhonecmd.vacancy_management.utils.TestUtils;
 
@@ -34,8 +35,12 @@ public class CompanyControllerTest {
         @Autowired
         private CompanyRepository companyRepository;
 
+        @Autowired
+        private JobRepository jobRepository;
+
         @BeforeEach
         public void setup() {
+                jobRepository.deleteAll();
                 companyRepository.deleteAll();
                 mvc = MockMvcBuilders.webAppContextSetup(context).build();
         }
@@ -59,11 +64,12 @@ public class CompanyControllerTest {
         @DisplayName("Should not be able to create a new company if him already exists.")
         public void should_not_be_able_to_create_a_new_company_if_him_already_exists() throws Exception {
 
+                companyRepository.deleteAll();
                 var company = CompanyEntity.builder().name("Company-test").email("company@email.com")
                                 .password("1234567890").description("description test")
                                 .webSite("https://www.company.org").build();
 
-                company = this.companyRepository.saveAndFlush(company);
+                this.companyRepository.saveAndFlush(company);
 
                 var createdCompanyDTO = CreateCompanyDTO.builder().name("Company Test").description("Description Test")
                                 .email("company@email.com").password("encrypted_password")

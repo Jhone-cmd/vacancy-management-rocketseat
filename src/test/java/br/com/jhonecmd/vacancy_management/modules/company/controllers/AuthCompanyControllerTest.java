@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import br.com.jhonecmd.vacancy_management.modules.company.dto.AuthCompanyDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.entities.CompanyEntity;
+import br.com.jhonecmd.vacancy_management.modules.company.job.repositories.JobRepository;
 import br.com.jhonecmd.vacancy_management.modules.company.repositories.CompanyRepository;
 import br.com.jhonecmd.vacancy_management.utils.TestUtils;
 
@@ -33,8 +34,15 @@ public class AuthCompanyControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private JobRepository jobRepository;
+
     @BeforeEach
     void setup() {
+        jobRepository.deleteAll();
         companyRepository.deleteAll();
 
         var company = CompanyEntity.builder().name("Company-test").email("company@email.com")
@@ -45,9 +53,6 @@ public class AuthCompanyControllerTest {
 
         company = this.companyRepository.saveAndFlush(company);
     }
-
-    @Autowired
-    private CompanyRepository companyRepository;
 
     @Test
     @DisplayName("Should be able to authenticate a company.")
