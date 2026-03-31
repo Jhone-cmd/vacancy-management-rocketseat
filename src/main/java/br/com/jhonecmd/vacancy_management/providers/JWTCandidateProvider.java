@@ -11,7 +11,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 @Service
 public class JWTCandidateProvider {
 
-    @Value("${security.token.secret.candidate}")
+    @Value("${JWT_TOKEN_CANDIDATE}")
     private String secretKey;
 
     public DecodedJWT validateToken(String token) {
