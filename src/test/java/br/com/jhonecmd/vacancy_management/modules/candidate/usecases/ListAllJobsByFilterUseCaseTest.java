@@ -33,7 +33,7 @@ public class ListAllJobsByFilterUseCaseTest {
 
         @Test
         @DisplayName("Should be able to list all jobs by filter.")
-        public void should_be_able_to_list_al_jobs_by_filter() {
+        public void should_be_able_to_list_all_jobs_by_filter() {
 
                 var company = CompanyEntity.builder().name("Tech Corp").build();
                 var job = JobEntity.builder()
