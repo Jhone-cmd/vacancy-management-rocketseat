@@ -40,11 +40,12 @@ public class AuthenticateCompanyUseCase {
             throw new InvalidCredentials();
         }
 
+        var roles = Arrays.asList("COMPANY");
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         var expiresIn = Instant.now().plus(Duration.ofDays(7));
 
         var token = JWT.create().withIssuer("java-vagas").withSubject(company.getId().toString())
-                .withClaim("roles", Arrays.asList("COMPANY"))
+                .withClaim("roles", roles)
                 .withExpiresAt(expiresIn).sign(algorithm);
 
         var authCompanyResponseDTO = AuthCompanyResponseDTO.builder().access_token(token)

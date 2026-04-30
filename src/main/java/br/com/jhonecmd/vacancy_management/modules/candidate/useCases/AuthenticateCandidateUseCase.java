@@ -41,15 +41,17 @@ public class AuthenticateCandidateUseCase {
             throw new InvalidCredentials();
         }
 
+        var roles = Arrays.asList("CANDIDATE");
+
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         var expiresIn = Instant.now().plus(Duration.ofDays(7));
 
         var token = JWT.create().withIssuer("java-vagas").withSubject(candidate.getId().toString())
-                .withClaim("roles", Arrays.asList("CANDIDATE"))
+                .withClaim("roles", roles)
                 .withExpiresAt(expiresIn).sign(algorithm);
 
         var authCandidateResponseDTO = AuthCandidateResponseDTO.builder().access_token(token)
-                .expiresAt(expiresIn.toEpochMilli()).build();
+                .expiresAt(expiresIn.toEpochMilli()).roles(roles).build();
 
         return authCandidateResponseDTO;
     }

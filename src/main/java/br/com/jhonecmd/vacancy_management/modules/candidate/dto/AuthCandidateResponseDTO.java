@@ -1,5 +1,7 @@
 package br.com.jhonecmd.vacancy_management.modules.candidate.dto;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +19,7 @@ public class AuthCandidateResponseDTO {
 
     @Schema(example = "1516239022")
     private Long expiresAt;
+
+    @Schema(example = "[CANDIDATE]")
+    private List<String> roles;
 }
