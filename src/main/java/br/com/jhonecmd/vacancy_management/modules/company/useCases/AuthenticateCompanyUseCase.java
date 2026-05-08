@@ -49,7 +49,7 @@ public class AuthenticateCompanyUseCase {
                 .withExpiresAt(expiresIn).sign(algorithm);
 
         var authCompanyResponseDTO = AuthCompanyResponseDTO.builder().access_token(token)
-                .expiresAt(expiresIn.toEpochMilli()).build();
+                .expiresAt(expiresIn.toEpochMilli()).roles(roles).build();
 
         return authCompanyResponseDTO;
     }
