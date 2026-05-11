@@ -1,4 +1,4 @@
-package br.com.jhonecmd.vacancy_management.modules.candidate.dto;
+package br.com.jhonecmd.vacancy_management.modules.company.job.dto;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListJobResponseDTO {
+public class ListJobResponseByCompanyDTO {
 
     @Schema(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
     private UUID id;
@@ -30,6 +30,4 @@ public class ListJobResponseDTO {
     @Schema(example = "JUNIOR")
     private Level level;
 
-    @Schema(example = "Empresa destinada a vagas JAVA")
-    private String companyName;
 }

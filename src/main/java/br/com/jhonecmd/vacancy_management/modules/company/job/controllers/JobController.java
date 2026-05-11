@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jhonecmd.vacancy_management.exceptions.ErrorMessageDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.dto.CreateJobDTO;
+import br.com.jhonecmd.vacancy_management.modules.company.job.dto.ListJobResponseByCompanyDTO;
 import br.com.jhonecmd.vacancy_management.modules.company.job.entities.JobEntity;
 import br.com.jhonecmd.vacancy_management.modules.company.job.useCases.CreateJobUseCase;
+import br.com.jhonecmd.vacancy_management.modules.company.job.useCases.ListAllJobUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +37,9 @@ public class JobController {
 
     @Autowired
     private CreateJobUseCase createJobUseCase;
+
+    @Autowired
+    private ListAllJobUseCase listAllJobUseCase;
 
     @PostMapping("")
     @PreAuthorize("hasRole('COMPANY')")
@@ -59,6 +65,28 @@ public class JobController {
 
             this.createJobUseCase.execute(jobEntity);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
+
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('COMPANY')")
+    @Operation(summary = "List of Jobs", description = "This route is designed to list of jobs from a company.")
+    @SecurityRequirement(name = "auth")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(array = @ArraySchema(schema = @Schema(implementation = ListJobResponseByCompanyDTO.class)))
+            })
+    })
+    public ResponseEntity<Object> jobsList(HttpServletRequest request) {
+        try {
+
+            var companyId = request.getAttribute("companyId");
+
+            var result = this.listAllJobUseCase.execute(UUID.fromString(companyId.toString()));
+            return ResponseEntity.ok(result);
 
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
